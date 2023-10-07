@@ -1,0 +1,6 @@
+<p>{{clean | async}}</p>
+
+<form #uploadForm="ngForm" (submit)="submit()">
+    <input type="file" required (change)="onFileChange($event)"/>
+    <input type="submit"/>
+</form>

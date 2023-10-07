@@ -1,0 +1,48 @@
+# portal namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portal
+  labels:
+    name: portal
+---
+
+# portal web
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portalweb-deploy
+  namespace: portal
+  labels:
+    app: portalweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portalweb
+  template:
+    metadata:
+      labels:
+        app: portalweb
+    spec: 
+      containers:
+      - name: portalweb-pod
+        image: ne1410s/portalweb:0.0.3-alpha
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portalweb-nodeport
+  namespace: portal
+spec:
+  type: NodePort
+  selector:
+    app: portalweb
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30700
+---

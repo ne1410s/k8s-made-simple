@@ -1,0 +1,151 @@
+# fileman namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fileman
+  labels:
+    name: fileman
+---
+
+# clamav
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clamav-deploy
+  namespace: fileman
+  labels:
+    app: clamav
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clamav
+  template:
+    metadata:
+      labels:
+        app: clamav
+    spec: 
+      containers:
+      - name: clamav-pod
+        image: clamav/clamav:1.2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clamav-clusterip
+  namespace: fileman
+spec:
+  type: ClusterIP
+  selector:
+    app: clamav
+  ports:
+    - protocol: TCP
+      port: 3310
+      targetPort: 3310
+---
+
+# gotenberg
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gotenberg-deploy
+  namespace: fileman
+  labels:
+    app: gotenberg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gotenberg
+  template:
+    metadata:
+      labels:
+        app: gotenberg
+    spec: 
+      containers:
+      - name: gotenberg-pod
+        image: gotenberg/gotenberg:7.9
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gotenberg-clusterip
+  namespace: fileman
+spec:
+  type: ClusterIP
+  selector:
+    app: gotenberg
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+
+# filemanapi
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filemanapi-deploy
+  namespace: fileman
+  labels:
+    app: filemanapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filemanapi
+  template:
+    metadata:
+      labels:
+        app: filemanapi
+    spec: 
+      containers:
+      - name: filemanapi-pod
+        image: ne1410s/filemanapi:0.0.2-alpha
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filemanapi-clusterip
+  namespace: fileman
+spec:
+  type: ClusterIP
+  selector:
+    app: filemanapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: filemanapi-localhost
+  namespace: fileman
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    cert-manager.io/cluster-issuer: letsencrypt-issuer-staging
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - fileman.local.ne1410s.co.uk
+    secretName: fileman-tls-cert
+  rules:
+  - host: fileman.local.ne1410s.co.uk
+    http:
+      paths:
+      - backend:
+          service:
+            name: filemanapi-clusterip
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost
+---
