@@ -107,9 +107,16 @@ Example cert manager manifest:
 Example prometheus manifests:
 - https://github.com/techiescamp/kubernetes-prometheus
 
+Prometheus - can then also set up the following:
+- kube-state-metrics
+- alert-monitor
+- grafana
+
+Guidance for each of the above may be found:
+- https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/#setting-up-kube-state-metrics
+
 Example open telemetry operator manifest:
 - https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
-
 
 
 ## TODO
