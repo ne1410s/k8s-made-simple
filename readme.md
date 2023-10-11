@@ -109,7 +109,7 @@ Example prometheus manifests:
 
 Prometheus - can then also set up the following:
 - kube-state-metrics
-- alert-monitor
+- alert-manager
 - grafana
 
 Guidance for each of the above may be found:
@@ -118,9 +118,12 @@ Guidance for each of the above may be found:
 Example open telemetry operator manifest:
 - https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 
+Guidance on setting up k8s dashboards once grafana is up:
+- https://devopscube.com/setup-grafana-kubernetes#create-kubernetes-dashboards-on-grafana
+
 
 ## TODO
 
-### OpenTel / Prometheus / Loki / Jaeger / Grafana 
+### Grafana / Loki / Jaeger
 ### ServiceMesh
 ### ConfigMaps 
