@@ -66,6 +66,7 @@ When a kubes pod-like resource (e.g Pod, Deployment, etc) is exposed internally 
 `http://<SERVICENAME>.<NAMESPACE>.svc.cluster.local`
 
 (This is conventional kubernetes behaviour. Note that other mechanisms may prevent access from succeeding, such as a service mesh).
+(The ".cluster.local" might be optional ..? A port number may also need to be specified)
 
 #### External Access
 Exposing a ClusterIP service alone will not make it accessible from outside of the cluster. This is typically done via one of the following ways:
@@ -124,6 +125,6 @@ Guidance on setting up k8s dashboards once grafana is up:
 
 ## TODO
 
-### Grafana / Loki / Jaeger
+### Loki / Jaeger
 ### ServiceMesh
 ### ConfigMaps 

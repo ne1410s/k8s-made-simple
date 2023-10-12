@@ -35,3 +35,13 @@ The following changes require k8s app namespaces to be deployed.
   - current ingress namespaces:
     - `portal | mq | fileman | monitoring`
 *NB: prometheus and grafana are both configured on the monitoring namespace, so don't require separate secrets).*
+
+## Configure grafana
+First and foremost, make sure the prometheus connection is using the *correct* url, e.g.:
+NB: This is Home > Connections > Data sources > prometheus > server url:
+  - http://prometheus-clusterip.monitoring.svc:8080
+  
+Then, can import / create dashboards til your heart's content :dashboards
+This is + icon, > Import dashboard
+
+  - Starter dashboard id: 8588
