@@ -98,6 +98,15 @@ With the above in place, DNS lookups from your machine to `yourservice.local.<YO
 
 There's obviously many alternatives to the above, but it does at least involve a legitimate TLS termination, in a manner that is extremely similar to how the cluster will behave within a hosted context.
 
+### Install helm
+Up until `04_telemetry`, we made do without helm and deployed manifests from copy/pasted templates.
+Helm simplifies deployment to kubes clusters, and when it comes to Loki and promtail, helm method is highly recommended.
+Download the helm util, and ensure it is accessible on your PATH :)
+
+#### Loki and promtail
+Guidance here:
+- https://grafana.com/docs/loki/latest/setup/install/
+
 ## Useful Links
 Example ingress controller manifest (nginx):
 - https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml

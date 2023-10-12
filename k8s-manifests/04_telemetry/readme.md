@@ -19,6 +19,10 @@ In OpenLens, go to (Cluster) > Settings > Metrics and set:
 
 With the above, the CPU and Memory dashboards should show up in OpenLens on the pods
 
+Install helm and add grafana repo:
+  - helm repo add grafana https://grafana.github.io/helm-charts
+  - helm repo update
+
 # Deploy k8s
 Run the following in order. Wait 20s or so between each:
   - kubectl apply -f "<REPO>\k8s-manifests\04_telemetry\stage01"
@@ -45,3 +49,9 @@ Then, can import / create dashboards til your heart's content :dashboards
 This is + icon, > Import dashboard
 
   - Starter dashboard id: 8588
+
+## Loki and promtail
+We're going to need helm for this, with the grafana repo as added above.
+Then, install loki and promtail as follows:
+  - helm install loki --namespace monitoring --values "<REPO>\k8s-manifests\04_telemetry\stage04_helm\loki-helm-values.yaml" grafana/loki
+  - helm install promtail --namespace monitoring grafana/promtail
