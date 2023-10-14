@@ -503,7 +503,7 @@ data:
                 "name": "prometheus",
                 "orgId": 1,
                 "type": "prometheus",
-                "url": "http://prometheus-service.monitoring.svc:8080",
+                "url": "http://prometheus-clusterip.monitoring.svc:8080",
                 "version": 1
             }
         ]

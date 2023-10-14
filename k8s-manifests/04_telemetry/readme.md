@@ -1,4 +1,4 @@
-# Pre-k8s (or anytime)
+# Pre-k8s one-time (/ anytime)
 Add hosts file entries as follows:
   - 127.0.0.1 prometheus.local.ne1410s.co.uk
   - 127.0.0.1 grafana.local.ne1410s.co.uk
@@ -6,7 +6,7 @@ Add hosts file entries as follows:
   - 127.0.0.1 fileman.local.ne1410s.co.uk
   - 127.0.0.1 portal.local.ne1410s.co.uk
 
-Apps are then accessible on:
+Apps are (/will be) accessible on:
   - https://prometheus.local.ne1410s.co.uk
   - https://grafana.local.ne1410s.co.uk
   - https://rabbit.local.ne1410s.co.uk
@@ -41,7 +41,11 @@ The following changes require k8s app namespaces to be deployed.
 *NB: prometheus and grafana are both configured on the monitoring namespace, so don't require separate secrets).*
 
 ## Configure grafana
-First and foremost, make sure the prometheus connection is using the *correct* url, e.g.:
+You should now be able to access grafana on the above url (admin:admin)
+First and foremost, make sure the prometheus connection in Grafana is using the *correct* url, e.g.:
+
+**If you've done everything right, the below should already be configured!!**
+
 NB: This is Home > Connections > Data sources > prometheus > server url:
   - http://prometheus-clusterip.monitoring.svc:8080
   
@@ -50,8 +54,21 @@ This is + icon, > Import dashboard
 
   - Starter dashboard id: 8588
 
-## Loki and promtail
+## Loki
 We're going to need helm for this, with the grafana repo as added above.
 Then, install loki and promtail as follows:
   - helm install loki --namespace monitoring --values "<REPO>\k8s-manifests\04_telemetry\stage04_helm\loki-helm-values.yaml" grafana/loki
-  - helm install promtail --namespace monitoring grafana/promtail
+
+## Promtail
+Grafana official site recommend the yaml approach over docker or helm...
+  - kubectl apply -f "<REPO>\k8s-manifests\04_telemetry\stage05"
+
+Loki can then be visualised via a grafana dash, eg: 12019
+The loki data source url can be set as follows:
+  - http://loki.monitoring.svc:3100
+  
+Promtail.. still having issues w/ Loki dashboard.. however::
+By port-forwarding the daemonset:
+  - kubectl port-forward [-n NAMESPACE] daemonset/promtail-daemonset 9080
+Then this does seem to expose *something*...
+http://localhost:9080/targets
