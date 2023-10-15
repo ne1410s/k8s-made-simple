@@ -495,18 +495,27 @@ metadata:
 data:
   prometheus.yaml: |-
     {
-        "apiVersion": 1,
-        "datasources": [
-            {
-               "access":"proxy",
-                "editable": true,
-                "name": "prometheus",
-                "orgId": 1,
-                "type": "prometheus",
-                "url": "http://prometheus-clusterip.monitoring.svc:8080",
-                "version": 1
-            }
-        ]
+      "apiVersion": 1,
+      "datasources": [
+        {
+          "editable": false,
+          "name": "prometheus",
+          "type": "prometheus",
+          "url": "http://prometheus-clusterip.monitoring.svc:8080"
+        },
+        {
+          "editable": false,
+          "name": "Loki",
+          "type": "loki",
+          "url": "http://loki-gateway.default",
+          "jsonData": {
+            "httpHeaderName1": "X-Scope-OrgID"
+          },
+          "secureJsonData": {
+            "httpHeaderValue1": "1"
+          }
+        }
+      ]
     }
 ---
 
