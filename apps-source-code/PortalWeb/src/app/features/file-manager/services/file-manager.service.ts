@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { EnvService } from '../../shared/env.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileManagerService {
 
-  private readonly baseUrl: string = 'https://fileman.local.ne1410s.co.uk';
+  private readonly baseUrl: string = this.env.apiUrl;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private env: EnvService) {}
   
   public scan(file: File) {
     const endpoint = `${this.baseUrl}/antivirus/scan`;
