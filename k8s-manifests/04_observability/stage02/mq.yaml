@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-clusterip
+  name: rabbitmq-service
   namespace: mq
 spec:
   type: ClusterIP
@@ -48,7 +48,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmqui-clusterip
+  name: rabbitui-service
   namespace: mq
 spec:
   type: ClusterIP
@@ -62,21 +62,21 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rabbitmqui-localhost
+  name: rabbitui-localhost
   namespace: mq
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
     - rabbit.local.ne1410s.co.uk
-    secretName: mq-tls-cert
+    secretName: ingress-tls-cert
   rules:
   - host: rabbit.local.ne1410s.co.uk
     http:
       paths:
       - backend:
           service:
-            name: rabbitmqui-clusterip
+            name: rabbitui-service
             port:
               number: 15672
         path: /

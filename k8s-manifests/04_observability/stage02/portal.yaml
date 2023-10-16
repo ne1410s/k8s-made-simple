@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: portalweb-clusterip
+  name: portalweb-service
   namespace: portal
 spec:
   type: ClusterIP
@@ -55,7 +55,7 @@ spec:
   tls:
   - hosts:
     - portal.local.ne1410s.co.uk
-    secretName: portal-tls-cert
+    secretName: ingress-tls-cert
   rules:
   - host: portal.local.ne1410s.co.uk
     http:
@@ -64,7 +64,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: portalweb-clusterip
+            name: portalweb-service
             port:
               number: 80
 status:

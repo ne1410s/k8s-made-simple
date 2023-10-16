@@ -15,36 +15,30 @@ Apps are (/will be) accessible on:
   
 In OpenLens, go to (Cluster) > Settings > Metrics and set:
   - PROMETHEUS: Prometheus Operator
-  - PROMETHEUS SERVICE ADDRESS: monitoring/prometheus-clusterip:8080
+  - PROMETHEUS SERVICE ADDRESS: monitoring/prometheus-service:8080
 
-With the above, the CPU and Memory dashboards should show up in OpenLens on the pods
+With the above, the CPU and Memory dashboards should show up in OpenLens on the pods (once prometheus is deployed!)
 
 Install helm and add grafana repo:
   - helm repo add grafana https://grafana.github.io/helm-charts
   - helm repo update
 
-# Deploy k8s
+# Deployment
 Run the following in order. Wait 20s or so between each:
   - kubectl apply -f "<REPO>\k8s-manifests\04_observability\stage01"
   - kubectl apply -f "<REPO>\k8s-manifests\04_observability\stage02"
 
-# Post-k8s
-The following changes require k8s app namespaces to be deployed.
-
 ## Apply ssl certificate payloads as secrets
   - cd to directory containing SSL cert files
   - add a secret for each ingress namespace
-    - `kubectl create secret tls NAMESPACE-tls-cert -n NAMESPACE --key=tls.key --cert=tls.crt`
+    - `kubectl create secret tls ingress-tls-cert -n NAMESPACE --key=tls.key --cert=tls.crt`
   - current ingress namespaces:
     - `portal | mq | fileman | monitoring`
 *NB: prometheus and grafana are both configured on the monitoring namespace, so don't require separate secrets).*
 
 ## Loki and Promtail
 Install loki via helm:
-  - helm install loki --namespace monitoring --values "<REPO>\k8s-manifests\04_observability\stage03_helm\loki-helm-values.yaml" grafana/loki
-
-Install promtail (via manifest):
-  - kubectl apply -f "<REPO>\k8s-manifests\04_observability\stage04"
+  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\04_observability\stage03_helm\loki-helm-values.yaml" grafana/loki
 
 ## Configure grafana
 You should now be able to access grafana on the above url (admin:admin)
@@ -55,11 +49,11 @@ We're now free to add prometheus- and loki- related dashboards!!
 
 # Troubleshooting
 One way to directly access loki metrics is by port-forwarding the service:
-  - kubectl port-forward [-n NAMESPACE] service/loki 3100
+  - kubectl port-forward -n monitoring service/loki 3100
   - http://localhost:3100/metrics
 
 To directly access promtail targets, etc we can port-forward the daemonset:
-  - kubectl port-forward [-n NAMESPACE] daemonset/promtail-daemonset 9080
+  - kubectl port-forward -n monitoring daemonset/promtail-daemonset 9080
   - http://localhost:9080/targets
 
 Viewing the promtail-daemonset pod logs also proved useful when writing this guide!
