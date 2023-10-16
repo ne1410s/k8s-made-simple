@@ -642,7 +642,7 @@ metadata:
 subjects:
     - kind: ServiceAccount
       name: promtail-serviceaccount
-      namespace: default
+      namespace: monitoring
 roleRef:
     kind: ClusterRole
     name: promtail-clusterrole
@@ -705,7 +705,7 @@ data:
       http_listen_port: 9080
       grpc_listen_port: 0
     clients:
-    - url: http://loki-gateway.monitoring/loki/api/v1/push
+    - url: http://loki-gateway/loki/api/v1/push
       tenant_id: 1
     positions:
       filename: /tmp/positions.yaml
