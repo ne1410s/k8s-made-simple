@@ -48,7 +48,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitui-service
+  name: rabbitmqui-service
   namespace: mq
 spec:
   type: ClusterIP
@@ -62,8 +62,11 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rabbitui-localhost
+  name: rabbitmqui-localhost
   namespace: mq
+  annotations:
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:
@@ -76,7 +79,7 @@ spec:
       paths:
       - backend:
           service:
-            name: rabbitui-service
+            name: rabbitmqui-service
             port:
               number: 15672
         path: /

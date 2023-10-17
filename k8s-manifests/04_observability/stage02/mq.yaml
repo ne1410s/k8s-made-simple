@@ -64,6 +64,9 @@ kind: Ingress
 metadata:
   name: rabbitui-localhost
   namespace: mq
+  annotations:
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:

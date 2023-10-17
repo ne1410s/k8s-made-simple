@@ -82,6 +82,15 @@ spec:
 ---
 
 # filemanapi
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filemanapi-config
+  namespace: fileman
+data:
+  ClamAv__Hostname: "clamav-service.fileman"
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -101,7 +110,10 @@ spec:
     spec: 
       containers:
       - name: filemanapi-pod
-        image: ne1410s/filemanapi:0.0.5-alpha
+        image: ne1410s/filemanapi:0.0.1-alpha
+        envFrom:
+        - configMapRef:
+            name: filemanapi-config
         ports:
         - containerPort: 80
 ---
@@ -126,6 +138,8 @@ metadata:
   namespace: fileman
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:

@@ -248,12 +248,15 @@ kind: Ingress
 metadata:
   name: prometheus-ui
   namespace: monitoring
+  annotations:
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:
   - hosts: 
     - prometheus.local.ne1410s.co.uk
-    secretName: monitoring-tls-cert
+    secretName: ingress-tls-cert
   rules:
   - host: prometheus.local.ne1410s.co.uk
     http:
@@ -586,6 +589,9 @@ kind: Ingress
 metadata:
   name: grafana-localhost
   namespace: monitoring
+  annotations:
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:

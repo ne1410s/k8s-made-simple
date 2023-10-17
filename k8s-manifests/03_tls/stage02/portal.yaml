@@ -8,6 +8,17 @@ metadata:
 ---
 
 # portal web
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portalweb-config
+  namespace: portal
+data:
+  env.js: >
+    window.__env = {
+      apiUrl: 'https://fileman.local.ne1410s.co.uk',
+    };
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,14 +38,21 @@ spec:
     spec: 
       containers:
       - name: portalweb-pod
-        image: ne1410s/portalweb:0.0.3-alpha
+        image: ne1410s/portalweb:0.0.1-alpha
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: portalweb-volume
+          mountPath: /usr/share/nginx/html/assets
+      volumes:
+      - name: portalweb-volume
+        configMap:
+          name: portalweb-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: portalweb-clusterip
+  name: portalweb-service
   namespace: portal
 spec:
   type: ClusterIP
@@ -50,12 +68,15 @@ kind: Ingress
 metadata:
   name: portalweb-localhost
   namespace: portal
+  annotations:
+    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+    #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
     - portal.local.ne1410s.co.uk
-    secretName: portal-tls-cert
+    secretName: ingress-tls-cert
   rules:
   - host: portal.local.ne1410s.co.uk
     http:
@@ -64,7 +85,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: portalweb-clusterip
+            name: portalweb-service
             port:
               number: 80
 status:
