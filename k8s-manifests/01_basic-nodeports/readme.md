@@ -1,6 +1,8 @@
-# Access
+# k8s
+Just run:
+  - kubectl apply -f "<REPO>\k8s-manifests\01_basic-nodeports"
 
-Apps are accessible on:
+# Access
+UIs accessible on:
   - Portal: http://localhost:30700
-  - FileMan: http://localhost:30701
   - Rabbit: http://localhost:30702
