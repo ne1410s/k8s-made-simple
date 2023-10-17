@@ -1,6 +1,7 @@
 # k8s
-Just run:
-  - kubectl apply -f "<REPO>\k8s-manifests\02_ingress"
+Run, wait about 10s in between:
+  - kubectl apply -f "<REPO>\k8s-manifests\02_ingress\stage01"
+  - kubectl apply -f "<REPO>\k8s-manifests\02_ingress\stage02"
 
 # Access
 UIs accessible on:
