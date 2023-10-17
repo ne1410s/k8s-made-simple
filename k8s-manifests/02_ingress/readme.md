@@ -1,6 +1,8 @@
-# Access
+# k8s
+Just run:
+  - kubectl apply -f "<REPO>\k8s-manifests\02_ingress"
 
-Apps are accessible on:
+# Access
+UIs accessible on:
   - http://portal.localdev.me
   - http://rabbit.localdev.me
-  - http://fileman.localdev.me

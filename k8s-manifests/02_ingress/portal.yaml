@@ -8,6 +8,17 @@ metadata:
 ---
 
 # portal web
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portalweb-config
+  namespace: portal
+data:
+  env.js: >
+    window.__env = {
+      apiUrl: 'http://fileman.localdev.me',
+    };
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,9 +38,16 @@ spec:
     spec: 
       containers:
       - name: portalweb-pod
-        image: ne1410s/portalweb:0.0.3-alpha
+        image: ne1410s/portalweb:0.0.1-alpha
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: portalweb-volume
+          mountPath: /usr/share/nginx/html/assets
+      volumes:
+      - name: portalweb-volume
+        configMap:
+          name: portalweb-config
 ---
 apiVersion: v1
 kind: Service
