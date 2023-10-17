@@ -89,7 +89,6 @@ metadata:
   namespace: fileman
 data:
   ClamAv__Hostname: "clamav-service.fileman"
-#immutable: true
 ---
 
 apiVersion: apps/v1

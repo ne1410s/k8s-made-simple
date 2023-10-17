@@ -1,5 +1,3 @@
-import * as envJson from 'src/assets/env.json';
-
 export class EnvService {
   /** The root url of the api. */
   apiUrl: string;
@@ -11,5 +9,5 @@ export class EnvService {
 
 export const EnvServiceProvider = {
   provide: EnvService,
-  useFactory: () => new EnvService(envJson),
+  useFactory: () => new EnvService((window as any).__env),
 };
