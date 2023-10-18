@@ -136,6 +136,9 @@ Guidance on Jaeger operator:
 - https://www.jaegertracing.io/docs/1.50/operator/
 - https://github.com/jaegertracing/jaeger-operator/releases
 
+Jaeger auto-instrumentation setup guide:
+- https://www.infracloud.io/blogs/opentelemetry-auto-instrumentation-jaeger/#implementing-opentelemetry-auto-instrumentation
+
 Guidance on setting up k8s dashboards once grafana is up:
 - https://devopscube.com/setup-grafana-kubernetes#create-kubernetes-dashboards-on-grafana
 
