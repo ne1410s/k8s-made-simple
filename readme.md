@@ -63,10 +63,10 @@ to change, use following in the Ingress > metadata > annotations block:
 #### Internal Access from other Resources
 When a kubes pod-like resource (e.g Pod, Deployment, etc) is exposed internally within the cluster (typically with a ClusterIP service), then those pods are accessible from other resources via:
 
-`http://<SERVICENAME>.<NAMESPACE>.svc.cluster.local`
+`http://<SERVICENAME>.<NAMESPACE>[.svc[.cluster[.local]]]`
 
 (This is conventional kubernetes behaviour. Note that other mechanisms may prevent access from succeeding, such as a service mesh).
-(The ".cluster.local" might be optional ..? A port number may also need to be specified)
+(The "svc.cluster.local" seems to be optional ..? But obvs any non-80 port number needs specifying)
 
 #### External Access
 Exposing a ClusterIP service alone will not make it accessible from outside of the cluster. This is typically done via one of the following ways:
@@ -100,12 +100,16 @@ There's obviously many alternatives to the above, but it does at least involve a
 
 ### Install helm
 Up until `04_telemetry`, we made do without helm and deployed manifests from copy/pasted templates.
-Helm simplifies deployment to kubes clusters, and when it comes to Loki and promtail, helm method is highly recommended.
+Helm simplifies deployment to kubes clusters, and when it comes to Loki especially, helm method is recommended.
 Download the helm util, and ensure it is accessible on your PATH :)
 
 #### Loki and promtail
 Guidance here:
 - https://grafana.com/docs/loki/latest/setup/install/
+
+### Install Jaeger
+We'll need cert-manager, and ingress controller AND an opentel collector (e.g. using opentel operator).
+We can edit the namespace in the jaeger operator manifest
 
 ## Useful Links
 Example ingress controller manifest (nginx):
@@ -128,12 +132,16 @@ Guidance for each of the above may be found:
 Example open telemetry operator manifest:
 - https://github.com/open-telemetry/opentelemetry-operator/releases/latest/download/opentelemetry-operator.yaml
 
+Guidance on Jaeger operator:
+- https://www.jaegertracing.io/docs/1.50/operator/
+- https://github.com/jaegertracing/jaeger-operator/releases
+
 Guidance on setting up k8s dashboards once grafana is up:
 - https://devopscube.com/setup-grafana-kubernetes#create-kubernetes-dashboards-on-grafana
 
 
 ## TODO
 
-### Loki / Jaeger
+### Prometheus custom metrics...?
+### Jaeger
 ### ServiceMesh
-### ConfigMaps 

@@ -4,10 +4,8 @@ metadata:
   name: otel-collector
 spec:
   config: |
-
     extensions:
-      health_check:
-    
+      health_check:   
     receivers: 
       otlp:
         protocols:
@@ -27,14 +25,11 @@ spec:
           grpc:
           thrift_binary:
           thrift_compact:
-          thrift_http:
-    
+          thrift_http: 
     processors:
-      batch:
-    
+      batch:  
     exporters:
       logging:
-    
     service:
       pipelines:
         traces:
