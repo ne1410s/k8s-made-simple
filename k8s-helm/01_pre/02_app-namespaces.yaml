@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fileman
+  labels:
+    name: fileman
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mq
+  labels:
+    name: mq
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portal
+  labels:
+    name: portal
+---
