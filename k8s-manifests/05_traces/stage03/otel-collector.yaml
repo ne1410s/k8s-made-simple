@@ -2,7 +2,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: otel
-  #namespace: fileman
+  namespace: monitoring
 spec:
   config: |
     receivers:
@@ -16,7 +16,7 @@ spec:
     exporters:
       logging:
       otlp:
-        endpoint: "jaeger-collector.monitoring.svc.cluster.local:14250"
+        endpoint: "jaeger-collector.monitoring:4317"
         tls:
           insecure: true
     service:
@@ -30,11 +30,11 @@ spec:
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
-  name: otel-instrumentation
-  #namespace: fileman
+  name: fileman-instrumentation
+  namespace: fileman
 spec:
   exporter:
-    endpoint: http://otel-collector:4318
+    endpoint: http://otel-collector.monitoring:4318
   propagators:
     - tracecontext
     - baggage
