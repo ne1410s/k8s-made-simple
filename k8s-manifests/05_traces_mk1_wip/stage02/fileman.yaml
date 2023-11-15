@@ -110,7 +110,7 @@ spec:
     spec: 
       containers:
       - name: filemanapi-pod
-        image: ne1410s/filemanapi:0.0.2-alpha
+        image: ne1410s/filemanapi:0.0.1-alpha
         envFrom:
         - configMapRef:
             name: filemanapi-config

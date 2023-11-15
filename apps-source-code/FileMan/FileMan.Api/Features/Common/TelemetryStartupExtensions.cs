@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -16,6 +17,12 @@ public static class TelemetryStartupExtensions
                 .AddTelemetrySdk()
                 .AddService(assemblyName!);
 
+        void otlpOptionsBuilder(OtlpExporterOptions opts)
+        {
+            opts.Protocol = OtlpExportProtocol.Grpc;
+            opts.Endpoint = new Uri(configuration["Otlp:Endpoints:Grpc"]);
+        }
+
         services.AddOpenTelemetry()
             .ConfigureResource(appResourceBuilder)
             .WithTracing(builder => builder
@@ -23,11 +30,11 @@ public static class TelemetryStartupExtensions
                 .AddHttpClientInstrumentation()
                 .AddSource("APITracing")
                 //.AddConsoleExporter()
-                .AddOtlpExporter(options => options.Endpoint = new Uri(configuration["Otlp:Endpoint"])))
+                .AddOtlpExporter(otlpOptionsBuilder))
             .WithMetrics(builder => builder
                 .AddRuntimeInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                .AddOtlpExporter(options => options.Endpoint = new Uri(configuration["Otlp:Endpoint"])));
+                .AddOtlpExporter(otlpOptionsBuilder));
 
         return services;
     }
