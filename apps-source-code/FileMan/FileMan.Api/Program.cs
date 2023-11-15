@@ -4,6 +4,7 @@ using FileMan.Api.Features.Common;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers();
 builder.Services.AddDiscoveryFeature();
 builder.Services.AddCorsFeature(config);
