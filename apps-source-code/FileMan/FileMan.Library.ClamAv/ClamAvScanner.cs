@@ -1,5 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Text.Json;
 using FileMan.Business.Features.Av;
+using FileMan.Business.Features.Telemetry;
 using Microsoft.Extensions.Logging;
 using nClam;
 
@@ -9,20 +12,27 @@ public class ClamAvScanner : IAntiVirusScanner
 {
     private readonly IClamClient _client;
     private readonly ILogger<ClamAvScanner> _logger;
+    private readonly ActivitySource _tracing;
+    private readonly Histogram<long> _scanSizeMetric;
 
-    public ClamAvScanner(IClamClient client, ILogger<ClamAvScanner> logger)
+    public ClamAvScanner(IClamClient client, ILogger<ClamAvScanner> logger, IAppTelemetry telemetry)
     {
         _client = client;
         _logger = logger;
+        _tracing = telemetry.Tracing;
+        _scanSizeMetric = telemetry.Metrics.CreateHistogram<long>("clam_av.scan.file_size", "bytes");
     }
 
     public async Task<bool> IsContentSafe(Stream content)
     {
-        var scanResult = await _client.SendAndScanFileAsync(content);
-        var resultJson = JsonSerializer.Serialize(scanResult);
-        _logger.LogInformation("File scanned, length: {length}, result: {json}", content.Length, resultJson);
+        using var activity = _tracing.StartActivity("clam_av.scan");
 
-        var retVal = scanResult.Result switch
+        var scanResponse = await _client.SendAndScanFileAsync(content);
+        var resultText = scanResponse.Result.ToString();
+        _scanSizeMetric.Record(content.Length, new KeyValuePair<string, object?>("result", resultText));
+        _logger.LogInformation("File scanned, length: {length}, result: {result}", content.Length, resultText);
+
+        var retVal = scanResponse.Result switch
         {
             ClamScanResults.Clean => true,
             ClamScanResults.VirusDetected => false,

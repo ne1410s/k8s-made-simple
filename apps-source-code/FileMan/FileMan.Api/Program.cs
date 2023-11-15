@@ -17,5 +17,6 @@ app.UseDiscoveryFeature(app.Environment);
 app.UseAuthorization();
 app.MapControllers();
 app.UseCorsFeature();
+app.UseTelemetryFeature();
 
 app.Run();

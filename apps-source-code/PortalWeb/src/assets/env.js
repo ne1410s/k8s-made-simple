@@ -1,3 +1,4 @@
 window.__env = {
-  apiUrl: 'https://fileman.local.ne1410s.co.uk'
+  apiUrl: 'http://localhost:5163',
+  //apiUrl: 'https://fileman.local.ne1410s.co.uk',
 };

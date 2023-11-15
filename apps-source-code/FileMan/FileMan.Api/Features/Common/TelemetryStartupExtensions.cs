@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using FileMan.Business.Features.Telemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -12,30 +13,42 @@ public static class TelemetryStartupExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        var callingAssembly = Assembly.GetCallingAssembly().GetName();
+        var appName = callingAssembly.Name!;
+        var appVersion = callingAssembly.Version?.ToString();
+
         void appResourceBuilder(ResourceBuilder resource) => resource
                 .AddTelemetrySdk()
-                .AddService(assemblyName!);
+                .AddService(appName);
 
-        void otlpOptionsBuilder(OtlpExporterOptions opts)
+        void openTelemetryOptsBuilder(OtlpExporterOptions opts)
         {
             opts.Protocol = OtlpExportProtocol.Grpc;
-            opts.Endpoint = new Uri(configuration["Otlp:Endpoints:Grpc"]);
+            opts.Endpoint = new Uri(configuration["OpenTel:Grpc"]);
         }
+
+        services.AddSingleton<IAppTelemetry>(sp => new AppTelemetry(appName, appVersion));
 
         services.AddOpenTelemetry()
             .ConfigureResource(appResourceBuilder)
             .WithTracing(builder => builder
-                .AddAspNetCoreInstrumentation()
+                .AddSource(appName)
+                .AddAspNetCoreInstrumentation(opts => opts.RecordException = true)
                 .AddHttpClientInstrumentation()
-                .AddSource("APITracing")
-                //.AddConsoleExporter()
-                .AddOtlpExporter(otlpOptionsBuilder))
+                .AddEntityFrameworkCoreInstrumentation()
+                .AddOtlpExporter(openTelemetryOptsBuilder))
             .WithMetrics(builder => builder
+                .AddMeter(appName)
                 .AddRuntimeInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                .AddOtlpExporter(otlpOptionsBuilder));
+                .AddPrometheusExporter()
+                .AddOtlpExporter(openTelemetryOptsBuilder));
 
         return services;
+    }
+
+    public static IApplicationBuilder UseTelemetryFeature(this IApplicationBuilder app)
+    {
+        return app.UseOpenTelemetryPrometheusScrapingEndpoint();
     }
 }
