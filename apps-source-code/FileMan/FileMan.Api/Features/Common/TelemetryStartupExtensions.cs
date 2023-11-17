@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FileMan.Business.Features.Telemetry;
 using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -11,15 +12,18 @@ public static class TelemetryStartupExtensions
 {
     public static IServiceCollection AddTelemetryFeature(
         this IServiceCollection services,
+        ILoggingBuilder loggingBuilder,
         IConfiguration configuration)
     {
         var callingAssembly = Assembly.GetCallingAssembly().GetName();
         var appName = callingAssembly.Name!;
         var appVersion = callingAssembly.Version?.ToString();
 
-        void appResourceBuilder(ResourceBuilder resource) => resource
-                .AddTelemetrySdk()
-                .AddService(appName);
+        var appResourceBuilder = ResourceBuilder
+            .CreateDefault()
+            .AddTelemetrySdk()
+            .AddService(appName)
+            .AddEnvironmentVariableDetector();
 
         void openTelemetryOptsBuilder(OtlpExporterOptions opts)
         {
@@ -30,25 +34,34 @@ public static class TelemetryStartupExtensions
         services.AddSingleton<IAppTelemetry>(sp => new AppTelemetry(appName, appVersion));
 
         services.AddOpenTelemetry()
-            .ConfigureResource(appResourceBuilder)
             .WithTracing(builder => builder
+                .SetResourceBuilder(appResourceBuilder)
                 .AddSource(appName)
                 .AddAspNetCoreInstrumentation(opts => opts.RecordException = true)
                 .AddHttpClientInstrumentation()
                 .AddEntityFrameworkCoreInstrumentation()
                 .AddOtlpExporter(openTelemetryOptsBuilder))
             .WithMetrics(builder => builder
+                .SetResourceBuilder(appResourceBuilder)
                 .AddMeter(appName)
                 .AddRuntimeInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                .AddPrometheusExporter()
+                //.AddPrometheusExporter()
                 .AddOtlpExporter(openTelemetryOptsBuilder));
+
+        loggingBuilder.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeScopes = true;
+            logging.SetResourceBuilder(appResourceBuilder);
+            logging.AddOtlpExporter(openTelemetryOptsBuilder);
+        });
 
         return services;
     }
 
     public static IApplicationBuilder UseTelemetryFeature(this IApplicationBuilder app)
     {
-        return app.UseOpenTelemetryPrometheusScrapingEndpoint();
+        // return app.UseOpenTelemetryPrometheusScrapingEndpoint();
+        return app;
     }
 }

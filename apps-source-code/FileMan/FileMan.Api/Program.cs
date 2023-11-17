@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddDiscoveryFeature();
 builder.Services.AddCorsFeature(config);
 builder.Services.AddAntiVirusFeature();
-builder.Services.AddTelemetryFeature(config);
+builder.Services.AddTelemetryFeature(builder.Logging, config);
 
 var app = builder.Build();
 

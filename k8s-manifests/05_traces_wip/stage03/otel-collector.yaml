@@ -12,6 +12,12 @@ spec:
           http:
     
     exporters:
+      loki:
+        endpoint: http://loki-gateway/loki/api/v1/push
+        tls:
+          insecure: true
+      prometheus:
+        endpoint: ':59090'
       otlp:
         endpoint: tempo:4317
         tls:
@@ -19,17 +25,20 @@ spec:
     
     extensions:
       zpages:
-        endpoint: localhost:55679
     
     service:
       extensions: [zpages]
       pipelines:
+        logs:
+          receivers: [otlp]
+          exporters: [loki]
+        metrics:
+          receivers: [otlp]
+          exporters: [prometheus]
         traces:
           receivers: [otlp]
           exporters: [otlp]
-        
   ports:
     - name: otel-zpages
       port: 55679
       targetPort: 55679
----
