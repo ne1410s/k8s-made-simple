@@ -11,7 +11,15 @@ Metrics (incl. custom added ones) ARE reaching Grafana/Prometheus.. BUT, the cus
 
 SUGGESTIONS
 - In monitoring.yml / prometheus config map, there's an entry for 'opentelemetry-metrics' job...
-  --> Need to provide relabeling config; to send thru service name, pod name, etc
+  --> Need to provide relabeling config; to send thru: namespace, service name, pod name, etc
+
+-----------
+ISSUE
+Metrics - Really feel the "jobs" listed in prometheus should be just the single one - opentelemetry-metrics.
+
+SUGGESTIONS
+- Review the configuration with the various integrating components that surface in the current prometheus target list
+  --> And point them to opentel endpoints instead!!!
 
 -----------
 ISSUE
