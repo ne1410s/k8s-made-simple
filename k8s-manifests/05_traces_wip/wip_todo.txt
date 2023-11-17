@@ -1,0 +1,26 @@
+
+ISSUE
+Logs (incl. from our custom stuff) ARE NOT reaching Grafana/Loki (seemingly)
+
+SUGGESTIONS
+???
+
+-----------
+ISSUE
+Metrics (incl. custom added ones) ARE reaching Grafana/Prometheus.. BUT, the custom ones are lacking background/context:
+
+SUGGESTIONS
+- In monitoring.yml / prometheus config map, there's an entry for 'opentelemetry-metrics' job...
+  --> Need to provide relabeling config; to send thru service name, pod name, etc
+
+-----------
+ISSUE
+Traces should ideally be more in-depth (generically)
+
+SUGGESTIONS
+- Something like fody to generically inject Activity start code in every C# method?
+- Are there other things we can do in ASP.NET startup to emit more request data, etc?
+
+
+-----------
+FIXED: Traces *appear* to be coming thru fine to Grafana/Tempo. Yippee!
