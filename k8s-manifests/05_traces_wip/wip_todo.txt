@@ -32,3 +32,9 @@ SUGGESTIONS
 
 -----------
 FIXED: Traces *appear* to be coming thru fine to Grafana/Tempo. Yippee!
+
+
+
+
+???
+https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusexporter/README.md

@@ -10,6 +10,13 @@ spec:
         protocols:
           grpc:
           http:
+
+    processors:
+      transform:
+        metric_statements:
+          - context: datapoint
+            statements:
+            - set(attributes["svc"], resource.attributes["service.name"])
     
     exporters:
       loki:
@@ -18,6 +25,8 @@ spec:
           insecure: true
       prometheus:
         endpoint: ':59090'
+        const_labels:
+          otel: 1
       otlp:
         endpoint: tempo:4317
         tls:
@@ -34,6 +43,7 @@ spec:
           exporters: [loki]
         metrics:
           receivers: [otlp]
+          processors: [transform]
           exporters: [prometheus]
         traces:
           receivers: [otlp]
