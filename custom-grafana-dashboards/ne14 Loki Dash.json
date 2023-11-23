@@ -115,7 +115,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "10.2.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -129,7 +129,7 @@
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
-          "expr": "sum(count_over_time({namespace=\"$var_namespace\", app=~\"$var_service\", pod=~\"$var_instance\"} |~ \"$var_search\"[$__interval]))",
+          "expr": "sum(count_over_time({namespace=\"$var_namespace\", container=~\"$var_container\", pod=~\"$var_instance\"} |~ \"$var_search\"[$__interval]))",
           "refId": "A"
         }
       ],
@@ -193,7 +193,7 @@
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
-          "expr": "{namespace=\"$var_namespace\", app=~\"$var_service\", pod=~\"$var_instance\"} |~ \"$var_search\"",
+          "expr": "{namespace=\"$var_namespace\", container=~\"$var_container\", pod=~\"$var_instance\"} |~ \"$var_search\"",
           "refId": "A"
         }
       ],
@@ -241,7 +241,11 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "fileman",
+          "value": "fileman"
+        },
         "datasource": {
           "type": "loki",
           "uid": "${DS_LOKI}"
@@ -270,7 +274,11 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "loki",
           "uid": "${DS_LOKI}"
@@ -280,10 +288,10 @@
         "includeAll": true,
         "label": "App",
         "multi": false,
-        "name": "var_service",
+        "name": "var_container",
         "options": [],
         "query": {
-          "label": "app",
+          "label": "container",
           "refId": "LokiVariableQueryEditor-VariableQuery",
           "stream": "{namespace=\"$var_namespace\"}",
           "type": 1
@@ -299,7 +307,11 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "loki",
           "uid": "${DS_LOKI}"
@@ -314,7 +326,7 @@
         "query": {
           "label": "pod",
           "refId": "LokiVariableQueryEditor-VariableQuery",
-          "stream": "{namespace=\"$var_namespace\", app=~\"$var_service\"}",
+          "stream": "{namespace=\"$var_namespace\", container=~\"$var_container\"}",
           "type": 1
         },
         "refresh": 1,
@@ -363,6 +375,6 @@
   "timezone": "",
   "title": "ne14 Loki Dash",
   "uid": "lizz0RaZZ",
-  "version": 37,
+  "version": 1,
   "weekStart": ""
 }
