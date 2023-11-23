@@ -6,13 +6,25 @@ metadata:
 spec:
   config: |
     receivers:
+      loki/promtail:
+        protocols:
+          http:
+        use_incoming_timestamp: true
       otlp:
         protocols:
           grpc:
           http:
-
+    
     processors:
-      transform:
+      attributes/logs:
+        actions:
+        - action: insert
+          key: loki.attribute.labels
+          value: namespace, container, pod, job
+        - action: insert
+          key: loki.format
+          value: raw
+      transform/metrics:
         metric_statements:
           - context: datapoint
             statements:
@@ -25,8 +37,6 @@ spec:
           insecure: true
       prometheus:
         endpoint: ':59090'
-        const_labels:
-          otel: 1
       otlp:
         endpoint: tempo:4317
         tls:
@@ -39,11 +49,12 @@ spec:
       extensions: [zpages]
       pipelines:
         logs:
-          receivers: [otlp]
+          receivers: [loki/promtail]
+          processors: [attributes/logs]
           exporters: [loki]
         metrics:
           receivers: [otlp]
-          processors: [transform]
+          processors: [transform/metrics]
           exporters: [prometheus]
         traces:
           receivers: [otlp]
@@ -52,3 +63,6 @@ spec:
     - name: otel-zpages
       port: 55679
       targetPort: 55679
+    - name: otel-loki
+      port: 3500
+      targetPort: 3500

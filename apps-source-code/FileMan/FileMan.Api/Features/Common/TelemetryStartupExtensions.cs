@@ -49,13 +49,6 @@ public static class TelemetryStartupExtensions
                 //.AddPrometheusExporter()
                 .AddOtlpExporter(openTelemetryOptsBuilder));
 
-        loggingBuilder.AddOpenTelemetry(logging =>
-        {
-            logging.IncludeScopes = true;
-            logging.SetResourceBuilder(appResourceBuilder);
-            logging.AddOtlpExporter(openTelemetryOptsBuilder);
-        });
-
         return services;
     }
 
