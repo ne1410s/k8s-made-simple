@@ -1,10 +1,4 @@
 
-ISSUE
-Logs (incl. from our custom stuff) ARE NOT reaching Grafana/Loki (seemingly)
-
-SUGGESTIONS
-???
-
 -----------
 ISSUE
 Metrics (incl. custom added ones) ARE reaching Grafana/Prometheus.. BUT, the custom ones are lacking background/context:
@@ -15,7 +9,7 @@ SUGGESTIONS
 
 -----------
 ISSUE
-Metrics - Really feel the "jobs" listed in prometheus should be just the single one - opentelemetry-metrics.
+Metrics - Should/could the "jobs" listed in prometheus be just the single one - opentelemetry-metrics.
 
 SUGGESTIONS
 - Review the configuration with the various integrating components that surface in the current prometheus target list
@@ -29,12 +23,3 @@ SUGGESTIONS
 - Something like fody to generically inject Activity start code in every C# method?
 - Are there other things we can do in ASP.NET startup to emit more request data, etc?
 
-
------------
-FIXED: Traces *appear* to be coming thru fine to Grafana/Tempo. Yippee!
-
-
-
-
-???
-https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/prometheusexporter/README.md

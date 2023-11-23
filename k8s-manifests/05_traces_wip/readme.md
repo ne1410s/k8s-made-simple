@@ -2,6 +2,7 @@
 Add hosts file entries as follows:
   - 127.0.0.1 prometheus.local.ne1410s.co.uk
   - 127.0.0.1 grafana.local.ne1410s.co.uk
+  - 127.0.0.1 jaeger.local.ne1410s.co.uk
   - 127.0.0.1 rabbit.local.ne1410s.co.uk
   - 127.0.0.1 fileman.local.ne1410s.co.uk
   - 127.0.0.1 portal.local.ne1410s.co.uk
@@ -9,6 +10,7 @@ Add hosts file entries as follows:
 Apps are (/will be) accessible on:
   - https://prometheus.local.ne1410s.co.uk
   - https://grafana.local.ne1410s.co.uk
+  - https://jaeger.local.ne1410s.co.uk
   - https://rabbit.local.ne1410s.co.uk
   - https://fileman.local.ne1410s.co.uk
   - https://portal.local.ne1410s.co.uk
@@ -29,10 +31,11 @@ Run the following in order. Wait 20s or so between each:
   - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage01"
   - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage02"
   - <ISSUE_CERTS> - see below!
+  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_wip\stage03_helm\loki-helm-values.yaml" grafana/loki
   - helm upgrade --install tempo --namespace monitoring grafana/tempo
-  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_wip\stage04_helm\loki-helm-values.yaml" grafana/loki
   - helm upgrade --install opentelemetry-operator --namespace monitoring open-telemetry/opentelemetry-operator
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage03"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage04"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage05"
 
 ## Apply ssl certificate payloads as secrets
   - cd to directory containing SSL cert files

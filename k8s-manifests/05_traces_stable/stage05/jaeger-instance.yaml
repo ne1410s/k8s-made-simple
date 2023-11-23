@@ -6,6 +6,8 @@ metadata:
 spec:
   ingress:
     ingressClassName: nginx
+    hosts:
+    - jaeger.local.ne1410s.co.uk
     tls:
     - hosts:
       - jaeger.local.ne1410s.co.uk

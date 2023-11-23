@@ -37,8 +37,12 @@ spec:
           insecure: true
       prometheus:
         endpoint: ':59090'
-      otlp:
+      otlp/tempo:
         endpoint: tempo:4317
+        tls:
+          insecure: true
+      otlp/jaeger:
+        endpoint: jaeger-collector:4317
         tls:
           insecure: true
     
@@ -58,7 +62,7 @@ spec:
           exporters: [prometheus]
         traces:
           receivers: [otlp]
-          exporters: [otlp]
+          exporters: [otlp/tempo, otlp/jaeger]
   ports:
     - name: otel-zpages
       port: 55679

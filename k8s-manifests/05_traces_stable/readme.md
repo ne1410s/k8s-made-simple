@@ -23,14 +23,19 @@ With the above, the CPU and Memory dashboards should show up in OpenLens on the 
 
 Install helm and add grafana repo:
   - helm repo add grafana https://grafana.github.io/helm-charts
+  - helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
   - helm repo update
 
 # Deployment
 Run the following in order. Wait 20s or so between each:
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_old\stage01"
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_old\stage02"
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_old\stage03"
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_old\stage04"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage01"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage02"
+  - <ISSUE_CERTS> - see below!
+  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_stable\stage03_helm\loki-helm-values.yaml" grafana/loki
+  - helm upgrade --install tempo --namespace monitoring grafana/tempo
+  - helm upgrade --install opentelemetry-operator --namespace monitoring open-telemetry/opentelemetry-operator
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage04"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage05"
 
 ## Apply ssl certificate payloads as secrets
   - cd to directory containing SSL cert files
@@ -38,11 +43,7 @@ Run the following in order. Wait 20s or so between each:
     - `kubectl create secret tls ingress-tls-cert -n NAMESPACE --key=tls.key --cert=tls.crt`
   - current ingress namespaces:
     - `portal | mq | fileman | monitoring`
-*NB: prometheus, grafana, jaeger are configured on the monitoring namespace, so don't require separate secrets).*
-
-## Loki and Promtail
-Install loki via helm:
-  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_old\stage05_helm\loki-helm-values.yaml" grafana/loki
+*NB: prometheus, grafana, etc are configured on the monitoring namespace, so don't require separate secrets).*
 
 ## Configure grafana
 You should now be able to access grafana on the above url (admin:admin)
@@ -59,5 +60,9 @@ One way to directly access loki metrics is by port-forwarding the service:
 To directly access promtail targets, etc we can port-forward the daemonset:
   - kubectl port-forward -n monitoring daemonset/promtail-daemonset 9080
   - http://localhost:9080/targets
+  
+To view zpages (opentel experimental ui), port-forward as follows:
+  - kubectl port-forward -n monitoring service/otel-collector 55679
+  - http://localhost:55679/debug/servicez
 
 Viewing the promtail-daemonset pod logs also proved useful when writing this guide!
