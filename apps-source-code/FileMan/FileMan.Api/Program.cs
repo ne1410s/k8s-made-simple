@@ -1,5 +1,8 @@
+using Common.Observability;
 using FileMan.Api.Features.Av;
 using FileMan.Api.Features.Common;
+
+[assembly:TraceThis]
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;

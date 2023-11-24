@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMan.Api", "FileMan.Api\FileMan.Api.csproj", "{6DB6B876-5F71-4E8D-ADE1-5E6DD5011E7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMan.Api", "FileMan.Api\FileMan.Api.csproj", "{6DB6B876-5F71-4E8D-ADE1-5E6DD5011E7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMan.Business", "FileMan.Business\FileMan.Business.csproj", "{7A5C2AD7-864C-40DD-9655-76F139A190A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMan.Business", "FileMan.Business\FileMan.Business.csproj", "{7A5C2AD7-864C-40DD-9655-76F139A190A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMan.Library.ClamAv", "FileMan.Library.ClamAv\FileMan.Library.ClamAv.csproj", "{6FA1A87B-5684-4BF9-9175-F24B1E563857}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMan.Library.ClamAv", "FileMan.Library.ClamAv\FileMan.Library.ClamAv.csproj", "{6FA1A87B-5684-4BF9-9175-F24B1E563857}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMan.Library.Gotenberg", "FileMan.Library.Gotenberg\FileMan.Library.Gotenberg.csproj", "{4431E92E-BA9A-48A8-B266-AC4A90066390}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMan.Library.Gotenberg", "FileMan.Library.Gotenberg\FileMan.Library.Gotenberg.csproj", "{4431E92E-BA9A-48A8-B266-AC4A90066390}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Observability", "Common.Observability\Common.Observability.csproj", "{3AB0FD8F-5903-416E-BE85-A82673EDD6C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4431E92E-BA9A-48A8-B266-AC4A90066390}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4431E92E-BA9A-48A8-B266-AC4A90066390}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4431E92E-BA9A-48A8-B266-AC4A90066390}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AB0FD8F-5903-416E-BE85-A82673EDD6C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AB0FD8F-5903-416E-BE85-A82673EDD6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AB0FD8F-5903-416E-BE85-A82673EDD6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AB0FD8F-5903-416E-BE85-A82673EDD6C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fody" Version="6.8.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MethodBoundaryAspect.Fody" Version="2.0.149" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FileMan.Business\FileMan.Business.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
-﻿using System.Reflection;
-using FileMan.Business.Features.Telemetry;
+﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Reflection;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -30,7 +31,8 @@ public static class TelemetryStartupExtensions
             opts.Endpoint = new Uri(configuration["OpenTel:Grpc"]!);
         }
 
-        services.AddSingleton<IAppTelemetry>(sp => new AppTelemetry(appName, appVersion));
+        services.AddSingleton(new Meter(appName, appVersion));
+        services.AddSingleton(new ActivitySource(appName, appVersion));
 
         services.AddOpenTelemetry()
             .WithTracing(builder => builder
