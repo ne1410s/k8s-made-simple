@@ -16,7 +16,7 @@ public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
 
     public TraceThisAttribute()
     {
-        var assembly = Assembly.GetCallingAssembly().GetName();
+        var assembly = Assembly.GetEntryAssembly()!.GetName();
         _activitySource = new(assembly.Name!, assembly.Version?.ToString(3));
     }
 
@@ -27,12 +27,14 @@ public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
         var tags = TraceTools.GetTags(NamespaceVar, AppVar, PodVar);
         using var activity = _activitySource.StartActivity(activityName, kind, null!, tags);
 
-        Console.WriteLine($"Activity: {_activitySource.Name} / {activity}");
+        Debug.WriteLine($"Activity on {_activitySource.Name}; {activityName}");
     }
 
     private static string GetActivityName(MethodBase method)
     {
-        return $"{method.DeclaringType?.Name}::{method.Name}()";
+        var declaringAssembly = Assembly.GetAssembly(method.DeclaringType!);
+        var prefix = declaringAssembly?.GetName()?.Name;
+        return $"[{prefix}] {method.DeclaringType?.Name}::{method.Name}()";
     }
 
     public void Dispose()
