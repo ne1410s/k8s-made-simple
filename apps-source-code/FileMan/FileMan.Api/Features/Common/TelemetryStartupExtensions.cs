@@ -12,7 +12,6 @@ public static class TelemetryStartupExtensions
 {
     public static IServiceCollection AddTelemetryFeature(
         this IServiceCollection services,
-        ILoggingBuilder loggingBuilder,
         IConfiguration configuration)
     {
         var callingAssembly = Assembly.GetCallingAssembly().GetName();
@@ -28,7 +27,7 @@ public static class TelemetryStartupExtensions
         void openTelemetryOptsBuilder(OtlpExporterOptions opts)
         {
             opts.Protocol = OtlpExportProtocol.Grpc;
-            opts.Endpoint = new Uri(configuration["OpenTel:Grpc"]);
+            opts.Endpoint = new Uri(configuration["OpenTel:Grpc"]!);
         }
 
         services.AddSingleton<IAppTelemetry>(sp => new AppTelemetry(appName, appVersion));
@@ -46,7 +45,6 @@ public static class TelemetryStartupExtensions
                 .AddMeter(appName)
                 .AddRuntimeInstrumentation()
                 .AddAspNetCoreInstrumentation()
-                //.AddPrometheusExporter()
                 .AddOtlpExporter(openTelemetryOptsBuilder));
 
         return services;
@@ -54,7 +52,6 @@ public static class TelemetryStartupExtensions
 
     public static IApplicationBuilder UseTelemetryFeature(this IApplicationBuilder app)
     {
-        // return app.UseOpenTelemetryPrometheusScrapingEndpoint();
         return app;
     }
 }

@@ -28,8 +28,33 @@ spec:
       containers:
       - name: rabbitmq-pod
         image: rabbitmq:3.12-management
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: '8'
+          requests:
+            memory: 256Mi
+            cpu: 40m
         ports:
         - containerPort: 15672
+        env:
+        # use downward api to save messing around with role permissions, etc when trying
+        # to scrape and apply these simple properties later on the observability stack
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_APP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app']
+        - name: K8S_POD
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service
@@ -64,8 +89,8 @@ kind: Ingress
 metadata:
   name: rabbitui-localhost
   namespace: mq
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx

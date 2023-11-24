@@ -287,6 +287,13 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: '8'
+            requests:
+              memory: 1024Mi
+              cpu: 200m
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
@@ -331,8 +338,8 @@ kind: Ingress
 metadata:
   name: prometheus-ui
   namespace: monitoring
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
@@ -526,6 +533,13 @@ spec:
       automountServiceAccountToken: true
       containers:
       - image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.3.0
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: '8'
+          requests:
+            memory: 128Mi
+            cpu: 20m
         livenessProbe:
           httpGet:
             path: /healthz
@@ -639,11 +653,11 @@ spec:
           containerPort: 3000
         resources:
           limits:
-            memory: "1Gi"
-            cpu: "1000m"
+            memory: 1024Mi
+            cpu: '8'
           requests: 
-            memory: 500M
-            cpu: "500m"
+            memory: 1024Mi
+            cpu: 500m
         volumeMounts:
           - mountPath: /var/lib/grafana
             name: grafana-storage
@@ -682,8 +696,8 @@ kind: Ingress
 metadata:
   name: grafana-localhost
   namespace: monitoring
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
@@ -766,6 +780,13 @@ spec:
       containers:
       - name: promtail-container
         image: grafana/promtail
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: '8'
+          requests:
+            memory: 256Mi
+            cpu: 100m
         args:
         - -config.file=/etc/promtail/promtail.yaml
         env: 
@@ -839,7 +860,7 @@ data:
         - action: replace
           source_labels:
             - __meta_kubernetes_pod_container_name
-          target_label: container
+          target_label: app
         - replacement: /var/log/pods/*$1/*.log
           separator: /
           source_labels:

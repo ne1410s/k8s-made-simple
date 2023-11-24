@@ -129,7 +129,7 @@
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
-          "expr": "sum(count_over_time({namespace=\"$var_namespace\", container=~\"$var_container\", pod=~\"$var_instance\"} |~ \"$var_search\"[$__interval]))",
+          "expr": "sum(count_over_time({namespace=\"$var_namespace\", app=~\"$var_app\", pod=~\"$var_instance\"} |~ \"$var_search\"[$__interval]))",
           "refId": "A"
         }
       ],
@@ -193,7 +193,7 @@
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
-          "expr": "{namespace=\"$var_namespace\", container=~\"$var_container\", pod=~\"$var_instance\"} |~ \"$var_search\"",
+          "expr": "{namespace=\"$var_namespace\", app=~\"$var_app\", pod=~\"$var_instance\"} |~ \"$var_search\"",
           "refId": "A"
         }
       ],
@@ -288,10 +288,10 @@
         "includeAll": true,
         "label": "App",
         "multi": false,
-        "name": "var_container",
+        "name": "var_app",
         "options": [],
         "query": {
-          "label": "container",
+          "label": "app",
           "refId": "LokiVariableQueryEditor-VariableQuery",
           "stream": "{namespace=\"$var_namespace\"}",
           "type": 1
@@ -326,7 +326,7 @@
         "query": {
           "label": "pod",
           "refId": "LokiVariableQueryEditor-VariableQuery",
-          "stream": "{namespace=\"$var_namespace\", container=~\"$var_container\"}",
+          "stream": "{namespace=\"$var_namespace\", app=~\"$var_app\"}",
           "type": 1
         },
         "refresh": 1,

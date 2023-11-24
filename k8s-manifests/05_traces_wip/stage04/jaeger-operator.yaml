@@ -15485,9 +15485,12 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
         resources:
-          requests:
-            cpu: 100m
+          limits:
             memory: 128Mi
+            cpu: '8'
+          requests:
+            memory: 128Mi
+            cpu: 100m
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:

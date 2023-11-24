@@ -53,7 +53,7 @@ We're now free to add prometheus- and loki- related dashboards!!
   - Starter loki dashboard id: 12019
 
 # Troubleshooting
-One way to directly access loki metrics is by port-forwarding the service:
+One way to directly access loki-specific metrics is by port-forwarding the service:
   - kubectl port-forward -n monitoring service/loki 3100
   - http://localhost:3100/metrics
 
@@ -64,5 +64,10 @@ To directly access promtail targets, etc we can port-forward the daemonset:
 To view zpages (opentel experimental ui), port-forward as follows:
   - kubectl port-forward -n monitoring service/otel-collector 55679
   - http://localhost:55679/debug/servicez
+  - http://localhost:55679/debug/tracez
+  
+To view open-telemetry metrics directly:
+  - kubectl port-forward -n monitoring service/otel-collector 59090
+  - http://localhost:59090/metrics
 
 Viewing the promtail-daemonset pod logs also proved useful when writing this guide!
