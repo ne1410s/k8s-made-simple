@@ -28,6 +28,31 @@ spec:
       containers:
       - name: clamav-pod
         image: clamav/clamav:1.2
+        resources:
+          limits:
+            memory: 2048Mi
+            cpu: '8'
+          requests:
+            memory: 2048Mi
+            cpu: 2000m
+        env:
+        # use downward api to save messing around with role permissions, etc when trying
+        # to scrape and apply these simple properties later on the observability stack
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_APP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app']
+        - name: K8S_POD
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service
@@ -65,6 +90,32 @@ spec:
       containers:
       - name: gotenberg-pod
         image: gotenberg/gotenberg:7.9
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: '8'
+          requests:
+            memory: 512Mi
+            cpu: 100m
+        env:
+        # use downward api to save messing around with role permissions, etc when trying
+        # to scrape and apply these simple properties later on the observability stack
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_APP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app']
+        - name: K8S_POD
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        
 ---
 apiVersion: v1
 kind: Service
@@ -111,11 +162,36 @@ spec:
       containers:
       - name: filemanapi-pod
         image: ne1410s/filemanapi:0.0.1-alpha
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: '8'
+          requests:
+            memory: 256Mi
+            cpu: 40m
+        ports:
+        - containerPort: 80
         envFrom:
         - configMapRef:
             name: filemanapi-config
-        ports:
-        - containerPort: 80
+        env:
+        # use downward api to save messing around with role permissions, etc when trying
+        # to scrape and apply these simple properties later on the observability stack
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_APP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app']
+        - name: K8S_POD
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service

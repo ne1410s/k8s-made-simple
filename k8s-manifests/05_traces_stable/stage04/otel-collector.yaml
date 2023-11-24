@@ -20,16 +20,15 @@ spec:
         actions:
         - action: insert
           key: loki.attribute.labels
-          value: namespace, container, pod, job
+          value: namespace, app, pod, job
         - action: insert
           key: loki.format
           value: raw
-      transform/metrics:
-        metric_statements:
-          - context: datapoint
-            statements:
-            - set(attributes["svc"], resource.attributes["service.name"])
-    
+      # attributes/metrics:
+      #   actions:
+      #   - action: delete
+      #     key: instance
+
     exporters:
       loki:
         endpoint: http://loki-gateway/loki/api/v1/push
@@ -58,7 +57,7 @@ spec:
           exporters: [loki]
         metrics:
           receivers: [otlp]
-          processors: [transform/metrics]
+          # processors: [attributes/metrics]
           exporters: [prometheus]
         traces:
           receivers: [otlp]

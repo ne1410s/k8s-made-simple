@@ -28,14 +28,14 @@ Install helm and add grafana repo:
 
 # Deployment
 Run the following in order. Wait 20s or so between each:
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage01"
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage02"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage01"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage02"
   - <ISSUE_CERTS> - see below!
-  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_stable\stage03_helm\loki-helm-values.yaml" grafana/loki
+  - helm upgrade --install loki --namespace monitoring --values "<REPO>\k8s-manifests\05_traces_wip\stage03_helm\loki-helm-values.yaml" grafana/loki
   - helm upgrade --install tempo --namespace monitoring grafana/tempo
   - helm upgrade --install opentelemetry-operator --namespace monitoring open-telemetry/opentelemetry-operator
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage04"
-  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_stable\stage05"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage04"
+  - kubectl apply -f "<REPO>\k8s-manifests\05_traces_wip\stage05"
 
 ## Apply ssl certificate payloads as secrets
   - cd to directory containing SSL cert files
@@ -53,7 +53,7 @@ We're now free to add prometheus- and loki- related dashboards!!
   - Starter loki dashboard id: 12019
 
 # Troubleshooting
-One way to directly access loki metrics is by port-forwarding the service:
+One way to directly access loki-specific metrics is by port-forwarding the service:
   - kubectl port-forward -n monitoring service/loki 3100
   - http://localhost:3100/metrics
 
@@ -64,5 +64,10 @@ To directly access promtail targets, etc we can port-forward the daemonset:
 To view zpages (opentel experimental ui), port-forward as follows:
   - kubectl port-forward -n monitoring service/otel-collector 55679
   - http://localhost:55679/debug/servicez
+  - http://localhost:55679/debug/tracez
+  
+To view open-telemetry metrics directly:
+  - kubectl port-forward -n monitoring service/otel-collector 59090
+  - http://localhost:59090/metrics
 
 Viewing the promtail-daemonset pod logs also proved useful when writing this guide!

@@ -12,4 +12,3 @@ spec:
     - hosts:
       - jaeger.local.ne1410s.co.uk
       secretName: ingress-tls-cert
----
