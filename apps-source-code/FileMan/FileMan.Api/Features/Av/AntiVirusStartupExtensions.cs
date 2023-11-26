@@ -24,7 +24,7 @@ public static class AntiVirusStartupExtensions
 
         return new ClamClient(clamAvServer, clamAvPort)
         {
-            MaxStreamSize = clamAvMaxSize
+            MaxStreamSize = clamAvMaxSize,
         };
     }
 }
