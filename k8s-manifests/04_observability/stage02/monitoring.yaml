@@ -153,8 +153,12 @@ data:
       - scheme: http
         static_configs:
         - targets:
-          - "alertmanager.monitoring.svc:9093"
+          - 'alertmanager.monitoring.svc:9093'
     scrape_configs:
+      - job_name: 'opentelemetry-metrics'
+        scrape_interval: 5s
+        static_configs:
+          - targets: [otel-collector:59090]
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
           - role: endpoints
@@ -283,6 +287,13 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: '8'
+            requests:
+              memory: 1024Mi
+              cpu: 200m
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
@@ -327,8 +338,8 @@ kind: Ingress
 metadata:
   name: prometheus-ui
   namespace: monitoring
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
@@ -522,6 +533,13 @@ spec:
       automountServiceAccountToken: true
       containers:
       - image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.3.0
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: '8'
+          requests:
+            memory: 128Mi
+            cpu: 20m
         livenessProbe:
           httpGet:
             path: /healthz
@@ -585,7 +603,13 @@ data:
       "datasources": [
         {
           "editable": false,
-          "name": "prometheus",
+          "name": "Tempo",
+          "type": "tempo",
+          "url": "http://tempo:3100"
+        },
+        {
+          "editable": false,
+          "name": "Prometheus",
           "type": "prometheus",
           "url": "http://prometheus-service:8080"
         },
@@ -629,11 +653,11 @@ spec:
           containerPort: 3000
         resources:
           limits:
-            memory: "1Gi"
-            cpu: "1000m"
+            memory: 1024Mi
+            cpu: '8'
           requests: 
-            memory: 500M
-            cpu: "500m"
+            memory: 1024Mi
+            cpu: 500m
         volumeMounts:
           - mountPath: /var/lib/grafana
             name: grafana-storage
@@ -672,8 +696,8 @@ kind: Ingress
 metadata:
   name: grafana-localhost
   namespace: monitoring
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx
@@ -697,7 +721,7 @@ status:
     ingress:
     - hostname: localhost
 
-# promtail stuffs: (does need loki, which we'll do next via helm)
+# promtail stuffs: (scrapes all pod logs and routes to opentel)
 --- # ServiceAccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -756,6 +780,13 @@ spec:
       containers:
       - name: promtail-container
         image: grafana/promtail
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: '8'
+          requests:
+            memory: 256Mi
+            cpu: 100m
         args:
         - -config.file=/etc/promtail/promtail.yaml
         env: 
@@ -794,8 +825,7 @@ data:
       http_listen_port: 9080
       grpc_listen_port: 0
     clients:
-    - url: http://loki-gateway/loki/api/v1/push
-      tenant_id: 1
+    - url: http://otel-collector.monitoring:3500/loki/api/v1/push
     positions:
       filename: /tmp/positions.yaml
     target_config:
@@ -830,7 +860,7 @@ data:
         - action: replace
           source_labels:
             - __meta_kubernetes_pod_container_name
-          target_label: container
+          target_label: app
         - replacement: /var/log/pods/*$1/*.log
           separator: /
           source_labels:

@@ -41,8 +41,33 @@ spec:
       containers:
       - name: portalweb-pod
         image: ne1410s/portalweb:0.0.1-alpha
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: '8'
+          requests:
+            memory: 128Mi
+            cpu: 100m
         ports:
         - containerPort: 80
+        env:
+        # use downward api to save messing around with role permissions, etc when trying
+        # to scrape and apply these simple properties later on the observability stack
+        - name: K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_APP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app']
+        - name: K8S_POD
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
         volumeMounts:
         - name: portalweb-volume
           mountPath: /usr/share/nginx/html/assets
@@ -70,8 +95,8 @@ kind: Ingress
 metadata:
   name: portalweb-localhost
   namespace: portal
-  annotations:
-    # Uncomment below for 'dynamic' tls (must be hosted cluster)
+  #annotations:
+    ## Uncomment this block for 'dynamic' tls (must be hosted cluster)
     #cert-manager.io/cluster-issuer: letsencrypt-issuer
 spec:
   ingressClassName: nginx

@@ -144,7 +144,19 @@ Guidance on setting up k8s dashboards once grafana is up:
 
 
 ## TODO
+### Health checks - inc. kubes manifests!
+### HttpClientMetrics, etc  (front end traces?)
+### ServiceMesh?
 
-### Prometheus custom metrics...?
-### Jaeger
-### ServiceMesh
+
+## further helm charts
+helm install -n cert-manager cert-manager oci://registry-1.docker.io/bitnamicharts/cert-manager
+helm install -n ingress-nginx ingress-nginx oci://registry-1.docker.io/bitnamicharts/nginx-ingress-controller
+helm install -n monitoring prometheus oci://registry-1.docker.io/bitnamicharts/kube-prometheus
+helm install -n monitoring kube-state-metrics oci://registry-1.docker.io/bitnamicharts/kube-state-metrics
+helm install -n monitoring loki --values ".\02_helm-values\loki-helm-values.yaml" grafana/loki
+helm install -n monitoring grafana grafana/grafana
+helm install -n monitoring opentelemetry-operator open-telemetry/opentelemetry-operator
+helm install -n monitoring opentelemetry-collector open-telemetry/opentelemetry-collector --set mode=deployment
+helm install -n monitoring jaeger oci://registry-1.docker.io/bitnamicharts/jaeger
+
