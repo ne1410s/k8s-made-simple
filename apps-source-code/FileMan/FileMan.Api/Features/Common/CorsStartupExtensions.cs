@@ -3,8 +3,7 @@
 public static class CorsStartupExtensions
 {
     public static IServiceCollection AddCorsFeature(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         return services.AddCors(o => o
             .AddDefaultPolicy(builder => builder

@@ -9,17 +9,19 @@ var config = builder.Configuration;
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers();
+builder.Services.AddCorsFeature();
 builder.Services.AddDiscoveryFeature();
-builder.Services.AddCorsFeature(config);
-builder.Services.AddAntiVirusFeature();
+builder.Services.AddAntiVirusFeature(config);
+builder.Services.AddHealthzFeature();
 builder.Services.AddTelemetryFeature(config);
 
 var app = builder.Build();
 
 app.UseDiscoveryFeature(app.Environment);
 app.UseAuthorization();
-app.MapControllers();
 app.UseCorsFeature();
+app.MapControllers();
+app.UseHealthzFeature();
 app.UseTelemetryFeature();
 
 app.Run();
