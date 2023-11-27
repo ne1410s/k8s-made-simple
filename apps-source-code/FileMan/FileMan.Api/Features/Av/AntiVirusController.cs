@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using FileMan.Business.Features.Av;
 using Microsoft.AspNetCore.Mvc;
 

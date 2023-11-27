@@ -33,9 +33,19 @@ public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
         Debug.WriteLine($"Activity on {_activitySource.Name}; {activityName}");
     }
 
-    public override void OnExit(MethodExecutionArgs arg) => Dispose();
+    public override void OnExit(MethodExecutionArgs args)
+    {
+        if (args.ReturnValue is Task asyncTask)
+        {
+            asyncTask.ContinueWith(_ => Dispose());
+        }
+        else
+        {
+            Dispose();
+        }
+    }
 
-    public override void OnException(MethodExecutionArgs arg) => Dispose();
+    public override void OnException(MethodExecutionArgs args) => Dispose();
 
     public void Dispose()
     {
