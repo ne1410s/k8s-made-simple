@@ -6,23 +6,17 @@ namespace Common.Observability;
 
 public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
 {
-    private static readonly ActivitySource Source;
-    private static readonly ActivityTagsCollection Tags = TraceTools.GetTags();
-
-    static TraceThisAttribute()
-    {
-        var assembly = Assembly.GetEntryAssembly()!.GetName();
-        Source = new(assembly.Name!, assembly.Version?.ToString(3));
-    }
-
+    private ActivitySource? _activitySource;
     private Activity? _activity;
 
     public override void OnEntry(MethodExecutionArgs args)
     {
+        var assembly = Assembly.GetEntryAssembly()!.GetName();
         var activityName = GetActivityName(args.Method);
-        _activity = Source.StartActivity(activityName, ActivityKind.Internal, null!, Tags);
+        _activitySource = new ActivitySource(assembly.Name!, assembly.Version?.ToString(3));
+        _activity = _activitySource.StartActivity(activityName, ActivityKind.Internal, null!, TraceTools.GetTags());
 
-        Debug.WriteLine($"Activity on {Source.Name}; {activityName}");
+        Debug.WriteLine($"Activity on {_activitySource.Name}; {activityName}");
     }
 
     public override void OnExit(MethodExecutionArgs args)
@@ -53,12 +47,19 @@ public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
         }
 
         _activity?.AddEvent(new("exception", tags: tags));
+        Dispose();
     }
 
     public void Dispose()
     {
+        if (_activity != null)
+        {
+            Console.WriteLine("Stopping activity: " +  _activity.DisplayName);
+            _activity.Stop();
+        }
+
         _activity?.Dispose();
-        Source?.Dispose();
+        _activitySource?.Dispose();
     }
 
     private static string GetActivityName(MethodBase method)
