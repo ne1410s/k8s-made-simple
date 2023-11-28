@@ -7,10 +7,11 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["FileMan.Api/FileMan.Api.csproj", "FileMan.Api/"]
-COPY ["FileMan.Business/FileMan.Business.csproj", "FileMan.Business/"]
 COPY ["FileMan.Library.ClamAv/FileMan.Library.ClamAv.csproj", "FileMan.Library.ClamAv/"]
 COPY ["FileMan.Library.Gotenberg/FileMan.Library.Gotenberg.csproj", "FileMan.Library.Gotenberg/"]
-RUN dotnet restore "FileMan.Api/FileMan.Api.csproj"
+COPY ["FileMan.Business/FileMan.Business.csproj", "FileMan.Business/"]
+COPY ["Common.Observability/Common.Observability.csproj", "Common.Observability/"] 
+RUN --mount=type=secret,id=nuget_config_file dotnet restore "FileMan.Api/FileMan.Api.csproj" --configfile "/run/secrets/nuget_config_file"
 COPY . .
 WORKDIR "/src/FileMan.Api"
 RUN dotnet build "FileMan.Api.csproj" -c Release -o /app/build

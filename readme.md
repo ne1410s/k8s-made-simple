@@ -25,6 +25,11 @@ To build yourself a docker image for your app, do the following:
 - Push the tagged image to the repo:
   - `docker push <REPO>/<APP_NAME>:<SEMVER>`
 
+#### Building in VS
+Private nuget packages can be authenticated at image BUILD time, using secrets:
+(The config file in this case is then used in the `dotnet restore` command within the dockerfile)
+- docker build -f ".\FileMan.Api\Dockerfile" --force-rm -t filemanapi --secret id=nuget_config_file,src="C:\temp\nuget-docker.config" --build-arg "BUILD_CONFIGURATION=Release" .
+
 With the image pushed to a repo, you can now reference it from kubes manifest files (e.g. Pods, Deployments). 
 
 *You will need to ensure the agent/environment has appropriate access to the image repo of course.*
