@@ -2,5 +2,5 @@
 
 public interface IAntiVirusScanner
 {
-    public Task<bool> IsContentSafe(Stream content);
+    public Task AssertIsClean(Stream content);
 }

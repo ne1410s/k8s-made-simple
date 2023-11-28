@@ -17,9 +17,9 @@ public class AntiVirusController : ControllerBase
     [HttpPost]
     [Route("scan")]
     [RequestSizeLimit(100_000_000)]
-    public async Task<bool> Scan(IFormFile file)
+    public async Task Scan(IFormFile file)
     {
         using var str = file.OpenReadStream();
-        return await _scanner.IsContentSafe(str);
+        await _scanner.AssertIsClean(str);
     }
 }

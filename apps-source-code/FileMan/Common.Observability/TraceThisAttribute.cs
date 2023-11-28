@@ -6,31 +6,23 @@ namespace Common.Observability;
 
 public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
 {
-    private readonly ActivitySource _activitySource;
+    private static readonly ActivitySource Source;
+    private static readonly ActivityTagsCollection Tags = TraceTools.GetTags();
 
-    private Activity? _activity;
-
-    public string NamespaceVar { get; set; } = "K8S_NAMESPACE";
-
-    public string AppVar { get; set; } = "K8S_APP";
-
-    public string PodVar { get; set; } = "K8S_POD";
-
-    public TraceThisAttribute()
+    static TraceThisAttribute()
     {
         var assembly = Assembly.GetEntryAssembly()!.GetName();
-        _activitySource = new(assembly.Name!, assembly.Version?.ToString(3));
+        Source = new(assembly.Name!, assembly.Version?.ToString(3));
     }
+
+    private Activity? _activity;
 
     public override void OnEntry(MethodExecutionArgs args)
     {
         var activityName = GetActivityName(args.Method);
-        var kind = ActivityKind.Internal;
-        var tags = TraceTools.GetTags(NamespaceVar, AppVar, PodVar);
-        
-        _activity = _activitySource.StartActivity(activityName, kind, null!, tags);
+        _activity = Source.StartActivity(activityName, ActivityKind.Internal, null!, Tags);
 
-        Debug.WriteLine($"Activity on {_activitySource.Name}; {activityName}");
+        Debug.WriteLine($"Activity on {Source.Name}; {activityName}");
     }
 
     public override void OnExit(MethodExecutionArgs args)
@@ -45,12 +37,28 @@ public sealed class TraceThisAttribute : OnMethodBoundaryAspect, IDisposable
         }
     }
 
-    public override void OnException(MethodExecutionArgs args) => Dispose();
+    public override void OnException(MethodExecutionArgs args)
+    {
+        var ex = args.Exception;
+        var tags = new ActivityTagsCollection
+        {
+            ["type"] = ex.GetType().Name,
+            ["message"] = ex.Message,
+        };
+        
+        if (ex.InnerException != null)
+        {
+            tags.Add("innerType", ex.InnerException.GetType().Name);
+            tags.Add("innerMessage", ex.InnerException.Message);
+        }
+
+        _activity?.AddEvent(new("exception", tags: tags));
+    }
 
     public void Dispose()
     {
         _activity?.Dispose();
-        _activitySource?.Dispose();
+        Source?.Dispose();
     }
 
     private static string GetActivityName(MethodBase method)

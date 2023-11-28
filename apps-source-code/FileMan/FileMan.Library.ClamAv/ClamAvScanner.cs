@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Metrics;
 using Common.Observability;
 using FileMan.Business.Features.Av;
+using FluentErrors.Extensions;
 using Microsoft.Extensions.Logging;
 using nClam;
 
@@ -22,7 +23,7 @@ public class ClamAvScanner : IAntiVirusScanner
         _scanSizeMetric = appMeter.CreateHistogram<long>("av_file_size", "bytes");
     }
 
-    public async Task<bool> IsContentSafe(Stream content)
+    public async Task AssertIsClean(Stream content)
     {
         var scanResponse = await _client.SendAndScanFileAsync(content);
         var scanResult = scanResponse.Result;       
@@ -31,13 +32,6 @@ public class ClamAvScanner : IAntiVirusScanner
         _scanSizeMetric.Record(content.Length, k8sTags.Append(new("result", $"{scanResult}")).ToArray());
         _logger.LogInformation("File scanned, length: {length}, result: {result}", content.Length, scanResult);
 
-        var retVal = scanResult switch
-        {
-            ClamScanResults.Clean => true,
-            ClamScanResults.VirusDetected => false,
-            _ => (bool?)null
-        };
-
-        return retVal ?? throw new InvalidOperationException("ClamAv scan failed");
+        scanResult.MustBe(ClamScanResults.Clean, $"Unhappy scan of {content.Length} bytes. Result: {scanResult}");
     }
 }
