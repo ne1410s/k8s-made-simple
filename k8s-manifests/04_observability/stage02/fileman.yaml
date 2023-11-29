@@ -203,14 +203,15 @@ spec:
           httpGet:
             path: /healthz/ready
             port: 80
-          failureThreshold: 1
-          periodSeconds: 10
+          initialDelaySeconds: 15
+          failureThreshold: 3
+          periodSeconds: 30
         livenessProbe:
           httpGet:
             path: /healthz/live
             port: 80
           failureThreshold: 1
-          periodSeconds: 10
+          periodSeconds: 60
 
 ---
 apiVersion: v1
