@@ -5,11 +5,15 @@ namespace FileMan.Api.Features.Common;
 
 public static class HealthCheckStartupExtensions
 {
+    private const string ManualHealthCheckLoggerName = "ManualHealthCheck";
+
     public static IServiceCollection AddHealthzFeature(this IServiceCollection services)
     {
+        services.AddHttpClient(ManualHealthCheckLoggerName);
         services.AddHealthChecks()
             .AddCheck<ClamAvHealthCheck>("ClamAv")
             .AddCheck<GotenbergHealthCheck>("Gotenberg");
+
         return services;
     }
 
@@ -61,7 +65,7 @@ public static class HealthCheckStartupExtensions
             HealthCheckContext context,
             CancellationToken cancellationToken = default)
         {
-            var httpClient = _clientFactory.CreateClient();
+            var httpClient = _clientFactory.CreateClient(ManualHealthCheckLoggerName);
             var url = _config["GotenbergSharpClient:HealthCheckUrl"];
             try
             {
