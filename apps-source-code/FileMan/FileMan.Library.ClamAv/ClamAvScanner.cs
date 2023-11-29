@@ -30,7 +30,7 @@ public class ClamAvScanner : IAntiVirusScanner
         var k8sTags = TraceTools.GetTags();
 
         _scanSizeMetric.Record(content.Length, k8sTags.Append(new("result", $"{scanResult}")).ToArray());
-        _logger.LogInformation("File scanned, length: {length}, result: {result}", content.Length, scanResult);
+        _logger.LogInformation("File scanned, length: {bytes}, result: {result}", content.Length, scanResult);
 
         scanResult.MustBe(ClamScanResults.Clean, $"Unhappy scan of {content.Length} bytes. Result: {scanResult}");
     }

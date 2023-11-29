@@ -20,6 +20,7 @@ To build yourself a docker image for your app, do the following:
   - `docker build .`
 - Find the id of your newly-built image:
   - `docker images`
+  - `docker images --filter=reference='fileman*'`
 - Tag your image ready for pushing to a repo, e.g.
   - `docker tag <IMAGE_ID> <REPO>/<APP_NAME>:<SEMVER>`
 - Push the tagged image to the repo:

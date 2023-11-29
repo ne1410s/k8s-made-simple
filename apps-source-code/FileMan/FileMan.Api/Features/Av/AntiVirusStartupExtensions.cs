@@ -15,7 +15,7 @@ public static class AntiVirusStartupExtensions
             .AddScoped<IAntiVirusScanner, ClamAvScanner>();
     }
 
-    public static IClamClient GetClamClient(IConfiguration configuration)
+    private static IClamClient GetClamClient(IConfiguration configuration)
     {
         var clamAvServer = configuration.GetValue<string>("ClamAv:Hostname");
         var clamAvPort = configuration.GetValue<int>("ClamAv:Port");

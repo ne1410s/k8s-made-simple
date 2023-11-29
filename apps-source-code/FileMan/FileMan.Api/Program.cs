@@ -1,6 +1,7 @@
 using Common.Observability;
 using FileMan.Api.Features.Av;
 using FileMan.Api.Features.Common;
+using FileMan.Api.Features.Pdf;
 
 [assembly:TraceThis]
 
@@ -13,6 +14,7 @@ builder.Services.AddCorsFeature();
 builder.Services.AddDiscoveryFeature();
 builder.Services.AddFluentErrorsFeature();
 builder.Services.AddAntiVirusFeature(config);
+builder.Services.AddPdfConversionFeature(config);
 builder.Services.AddHealthzFeature();
 builder.Services.AddTelemetryFeature(config);
 

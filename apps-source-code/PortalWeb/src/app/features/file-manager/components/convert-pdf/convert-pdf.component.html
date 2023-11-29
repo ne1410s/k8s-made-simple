@@ -1,0 +1,6 @@
+<p>{{bytes}}</p>
+
+<form #uploadForm="ngForm" (submit)="submit()">
+    <input type="text" name="url" required [(ngModel)]="url"/>
+    <input type="submit"/>
+</form>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FileManagerService } from '../services/file-manager.service';
+import { FileManagerService } from '../../services/file-manager.service';
 import { Observable } from 'rxjs';
 
 @Component({

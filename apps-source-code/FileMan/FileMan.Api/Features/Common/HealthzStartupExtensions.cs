@@ -8,7 +8,8 @@ public static class HealthCheckStartupExtensions
     public static IServiceCollection AddHealthzFeature(this IServiceCollection services)
     {
         services.AddHealthChecks()
-            .AddCheck<ClamAvHealthCheck>("ClamAv");
+            .AddCheck<ClamAvHealthCheck>("ClamAv")
+            .AddCheck<GotenbergHealthCheck>("Gotenberg");
         return services;
     }
 
@@ -40,6 +41,38 @@ public static class HealthCheckStartupExtensions
         {
             var ping = await _clamClient.PingAsync(cancellationToken);
             return new(ping ? HealthStatus.Healthy : context.Registration.FailureStatus);
+        }
+    }
+
+    private class GotenbergHealthCheck : IHealthCheck
+    {
+        private readonly IConfiguration _config;
+        private readonly IHttpClientFactory _clientFactory;
+
+        public GotenbergHealthCheck(
+            IConfiguration config,
+            IHttpClientFactory clientFactory)
+        {
+            _config = config;
+            _clientFactory = clientFactory;
+        }
+
+        public async Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken cancellationToken = default)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            var url = _config["GotenbergSharpClient:HealthCheckUrl"];
+            try
+            {
+                var response = await httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                return new(HealthStatus.Healthy);
+            }
+            catch
+            {
+                return new(context.Registration.FailureStatus);
+            }
         }
     }
 }

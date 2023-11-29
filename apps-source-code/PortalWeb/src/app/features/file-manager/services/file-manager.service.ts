@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EnvService } from '../../shared/env.service';
-import { catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +22,10 @@ export class FileManagerService {
       map(() => true),
       catchError(() => of(false))
     );
+  }
+
+  public urlToPdf(url: string): Observable<Blob> {
+    const endpoint = `${this.baseUrl}/pdf/fromUrl`;
+    return this.httpClient.post(endpoint, null, { params: { url }, responseType: 'blob' });
   }
 }

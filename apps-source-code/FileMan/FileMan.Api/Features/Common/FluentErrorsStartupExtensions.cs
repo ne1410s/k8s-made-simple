@@ -56,14 +56,18 @@ public static class FluentErrorsStartupExtensions
 public class FluentErrorHandlingMiddleware
 {
     private readonly RequestDelegate next;
+    private readonly ILogger<FluentErrorHandlingMiddleware> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FluentErrorHandlingMiddleware"/> class.
     /// </summary>
     /// <param name="next">The request delegate.</param>
-    public FluentErrorHandlingMiddleware(RequestDelegate next)
+    public FluentErrorHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<FluentErrorHandlingMiddleware> logger)
     {
         this.next = next;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -81,6 +85,8 @@ public class FluentErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Unhandled exception");
+
             var httpOutcome = ex.ToOutcome();
             context.Response.StatusCode = httpOutcome.ErrorCode;
             await context.Response.WriteAsJsonAsync(httpOutcome.ErrorBody);
